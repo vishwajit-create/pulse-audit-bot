@@ -526,12 +526,30 @@ async def post_init(application):
     asyncio.create_task(background_monitoring_worker(application))
 
 def main():
-    if not config.TELEGRAM_BOT_TOKEN or config.TELEGRAM_BOT_TOKEN == "YOUR_BOTFATHER_TOKEN_HERE":
+    token = config.TELEGRAM_BOT_TOKEN
+    # Clean token from accidental quotes or spaces
+    if token:
+        token = token.strip().strip("'\"")
+
+    if not token or token == "YOUR_BOTFATHER_TOKEN_HERE":
         print("\n" + "="*65)
         print(" [!] TELEGRAM_BOT_TOKEN is not configured yet!")
         print(" [!] Please obtain a token from @BotFather on Telegram and")
-        print(" [!] add it to your .env file:")
-        print("     TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqr...")
+        print(" [!] set it in your environment variables:")
+        print("     TELEGRAM_BOT_TOKEN=1234567890:ABCdefGHIjklMNOpqr...")
+        print("="*65 + "\n")
+        sys.exit(1)
+
+    # Validate standard Telegram token format: <digits>:<string>
+    if ":" not in token or not token.split(":", 1)[0].isdigit():
+        print("\n" + "="*65)
+        print(" [!] CRITICAL: MALFORMED TELEGRAM_BOT_TOKEN!")
+        print(f" [!] Received token: '{token}'")
+        print(" [!] A valid Telegram bot token MUST contain two parts separated by a colon (:):")
+        print("     Format: <BOT_ID>:<SECRET_KEY>")
+        print("     Example: 7891234567:AAHaDeidi_bnyEnGv8K5I3sIzB-ETPy-P60")
+        print(" [!] It looks like the numeric Bot ID prefix was omitted or there are accidental spaces.")
+        print(" [!] Please go back to @BotFather on Telegram and copy the ENTIRE token line.")
         print("="*65 + "\n")
         sys.exit(1)
 
@@ -542,7 +560,7 @@ def main():
     # Start healthcheck server if running on cloud environments with $PORT (e.g. Render)
     start_health_server()
 
-    app = ApplicationBuilder().token(config.TELEGRAM_BOT_TOKEN).post_init(post_init).build()
+    app = ApplicationBuilder().token(token).post_init(post_init).build()
 
     # Handlers
     app.add_handler(CommandHandler("start", cmd_start))
