@@ -8,7 +8,7 @@ A cyber-forensic monitoring and audit Telegram bot built for **Pulse Chat** (hos
 
 1. **Autonomous Log Ingestion & Real-Time Monitoring**:
    - Continuously monitors your Render audit log endpoint:
-     `https://pulse-chat-x187.onrender.com/api/admin/audit-logs?key=a582bada4cc1da841b5a851cba3e1809`
+     `https://pulse-chat-x187.onrender.com/api/admin/audit-logs?key=
    - Keeps track of processed event IDs to prevent duplicate alerts.
    - Background polling cycle checks every 15 seconds (configurable).
 
