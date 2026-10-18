@@ -36,9 +36,14 @@ POLL_INTERVAL_SECONDS = int(os.getenv("POLL_INTERVAL_SECONDS", "15"))
 # Threat Intelligence (Optional)
 ABUSEIPDB_API_KEY = os.getenv("ABUSEIPDB_API_KEY", "").strip()
 
-# Directory for generated forensic artifacts
-REPORTS_DIR = Path(__file__).resolve().parent / "reports"
-REPORTS_DIR.mkdir(exist_ok=True)
+import tempfile
 
-# State cache for seen events
-STATE_FILE = Path(__file__).resolve().parent / "seen_events.json"
+# Directory for generated forensic artifacts (use /tmp on Vercel Serverless)
+if os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
+    REPORTS_DIR = Path(tempfile.gettempdir()) / "reports"
+    STATE_FILE = Path(tempfile.gettempdir()) / "seen_events.json"
+else:
+    REPORTS_DIR = Path(__file__).resolve().parent / "reports"
+    STATE_FILE = Path(__file__).resolve().parent / "seen_events.json"
+
+REPORTS_DIR.mkdir(parents=True, exist_ok=True)
