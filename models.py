@@ -19,17 +19,26 @@ class AuditEvent:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "AuditEvent":
+        raw_ip = data.get("ip")
+        clean_ip = str(raw_ip).strip() if raw_ip and str(raw_ip).lower() != "none" else "N/A"
+        
+        timestamp = str(data.get("timestamp") or data.get("created_at") or "")
+        event_type = str(data.get("eventType") or data.get("event_type") or "UNKNOWN")
+        user_agent = str(data.get("userAgent") or data.get("user_agent") or "")
+        socket_id = str(data.get("socketId") or data.get("socket_id") or data.get("id") or "")
+        is_flagged = bool(data.get("isFlagged") if "isFlagged" in data else data.get("is_flagged", False))
+        
         return cls(
             id=str(data.get("id", "")),
-            timestamp=str(data.get("timestamp", "")),
-            event_type=str(data.get("eventType", "UNKNOWN")),
-            ip=str(data.get("ip", "0.0.0.0")),
-            user_agent=str(data.get("userAgent", "")),
-            socket_id=str(data.get("socketId", "")),
-            sender=str(data.get("sender", "anonymous")),
-            target=str(data.get("target", "")),
-            message=str(data.get("message", "")),
-            is_flagged=bool(data.get("isFlagged", False)),
+            timestamp=timestamp,
+            event_type=event_type,
+            ip=clean_ip,
+            user_agent=user_agent,
+            socket_id=socket_id,
+            sender=str(data.get("sender") or "anonymous"),
+            target=str(data.get("target") or "All"),
+            message=str(data.get("message") or ""),
+            is_flagged=is_flagged,
             flags=list(data.get("flags", []) or []),
             raw=data
         )

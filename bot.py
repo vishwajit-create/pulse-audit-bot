@@ -90,11 +90,12 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Automatically set alert chat to this user
     active_alert_chat = chat_id
 
+    target_site = config.VERCEL_APP_URL if config.VERCEL_APP_URL else config.AUDIT_LOGS_URL.split('?')[0]
     welcome_text = (
         f"🛡️ <b>Pulse Chat Forensic Sentinel</b>\n\n"
         f"Welcome, <b>{user.first_name}</b>!\n"
-        f"This bot is actively monitoring your Render website audit logs:\n"
-        f"<code>{config.AUDIT_LOGS_URL.split('?')[0]}</code>\n\n"
+        f"This bot is actively monitoring your Vercel website audit logs:\n"
+        f"<code>{target_site}</code>\n\n"
         f"<b>Available Commands:</b>\n"
         f"• <code>/status</code> - View monitoring & sync statistics\n"
         f"• <code>/logs [count]</code> - Inspect recent website audit logs\n"
@@ -554,7 +555,8 @@ def main():
         sys.exit(1)
 
     print(f"[*] Starting Pulse Chat Forensic Sentinel Bot...")
-    print(f"[*] Monitoring URL: {config.AUDIT_LOGS_URL}")
+    print(f"[*] Website (Vercel): {config.VERCEL_APP_URL}")
+    print(f"[*] Audit Database (Supabase): {config.SUPABASE_URL}")
     print(f"[*] Polling frequency: {config.POLL_INTERVAL_SECONDS} seconds")
 
     # Start healthcheck server if running on cloud environments with $PORT (e.g. Render)

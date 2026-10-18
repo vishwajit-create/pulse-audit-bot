@@ -1,14 +1,14 @@
 # 🛡️ Pulse Chat Forensic Sentinel — Telegram Audit Bot
 
-A cyber-forensic monitoring and audit Telegram bot built for **Pulse Chat** (hosted on Render). The bot continuously inspects live visitor audit logs, detects attacks (SQLi, XSS, Path Traversal, Command Injection, Scrapers, Floods), sends real-time Telegram alerts, and compiles print-ready forensic dossiers (PDF & interactive chat briefings) on any visitor or IP address.
+A cyber-forensic monitoring and audit Telegram bot built for **Pulse Chat** (hosted on **Vercel** at `https://pulse-chat-phi-three.vercel.app/` with **Supabase Realtime** backend). The bot continuously inspects live visitor audit logs, detects attacks (SQLi, XSS, Path Traversal, Command Injection, Scrapers, Floods), sends real-time Telegram alerts, and compiles print-ready forensic dossiers (PDF & interactive chat briefings) on any visitor or IP address.
 
 ---
 
 ## 🌟 Key Capabilities
 
 1. **Autonomous Log Ingestion & Real-Time Monitoring**:
-   - Continuously monitors your Render audit log endpoint:
-     `https://pulse-chat-x187.onrender.com/api/admin/audit-logs?key=
+   - Continuously monitors your live Supabase audit log database (`chat_audit_logs`) powering your Vercel deployment:
+     `https://pulse-chat-phi-three.vercel.app/`
    - Keeps track of processed event IDs to prevent duplicate alerts.
    - Background polling cycle checks every 15 seconds (configurable).
 
@@ -18,12 +18,12 @@ A cyber-forensic monitoring and audit Telegram bot built for **Pulse Chat** (hos
    - **Command Injection (RCE)**: Catches piped shell commands (`; cat`, `| bash`, `powershell`, `$(whoami)`).
    - **Path Traversal / LFI**: Detects directory traversal (`../`, `/etc/passwd`, `.env`, `win.ini`).
    - **Tool & Scraper Fingerprinting**: Discovers automated bots (`sqlmap`, `nikto`, `curl`, `python-requests`, `headlesschrome`).
-   - **Application Security Flags**: Automatically escalates events flagged by your Render application (`isFlagged: true`).
+   - **Application Security Flags**: Automatically escalates events flagged by your Vercel application (`is_flagged: true`).
 
 3. **Forensic Person Dossier & Attribution**:
    - **Network Attribution**: Geolocation (City, Region, Country), ISP name, Autonomous System (ASN), Coordinates, and Abuse score.
    - **Client Hardware Fingerprint**: Parses raw User-Agent to extract OS (e.g. Windows 10, Android, Linux), Browser (Chrome, Firefox, Safari), device category, and bot probability.
-   - **Identity Correlation**: Correlates all handles/usernames used by the same IP address, socket IDs, and targeted chat rooms.
+   - **Identity Correlation**: Correlates all handles/usernames used by the same visitor, session sockets, and targeted chat rooms.
    - **Evidence Audit Trail**: Chronological log of all messages and actions taken by the subject.
 
 4. **Print-Ready Forensic PDF Generator**:
@@ -50,8 +50,11 @@ TELEGRAM_BOT_TOKEN=7123456789:ABCdefGHIjklMNOpqrstuVWXyz
 # (Optional) Restrict access to your Telegram numeric user ID
 ALLOWED_ADMIN_IDS=
 
-# Pre-configured audit log endpoint
-AUDIT_LOGS_URL=https://pulse-chat-x187.onrender.com/api/admin/audit-logs?key=a582bada4cc1da841b5a851cba3e1809
+# Pre-configured Vercel & Supabase Audit credentials
+VERCEL_APP_URL=https://pulse-chat-phi-three.vercel.app
+SUPABASE_URL=https://xsppndniabvdntvsivwm.supabase.co
+SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzcHBuZG5pYWJ2ZG50dnNpdndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyOTgxODIsImV4cCI6MjEwNzg3NDE4Mn0.f3jQmV-feyZorkfD1ZWM3dsNBwV3oSjuKsNeGHm2ni4
+SUPABASE_TABLE=chat_audit_logs
 
 # Polling frequency in seconds (default: 15)
 POLL_INTERVAL_SECONDS=15

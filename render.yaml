@@ -8,7 +8,13 @@ services:
     envVars:
       - key: TELEGRAM_BOT_TOKEN
         sync: false
-      - key: AUDIT_LOGS_URL
-        value: https://pulse-chat-x187.onrender.com/api/admin/audit-logs?key=a582bada4cc1da841b5a851cba3e1809
+      - key: VERCEL_APP_URL
+        value: https://pulse-chat-phi-three.vercel.app
+      - key: SUPABASE_URL
+        value: https://xsppndniabvdntvsivwm.supabase.co
+      - key: SUPABASE_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzcHBuZG5pYWJ2ZG50dnNpdndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyOTgxODIsImV4cCI6MjEwNzg3NDE4Mn0.f3jQmV-feyZorkfD1ZWM3dsNBwV3oSjuKsNeGHm2ni4
+      - key: SUPABASE_TABLE
+        value: chat_audit_logs
       - key: POLL_INTERVAL_SECONDS
         value: "15"

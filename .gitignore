@@ -15,8 +15,6 @@ seen_events.json
 # Local reports
 reports/*.pdf
 
-# IDE and OS
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
+# Other projects in workspace
+sms_gateway_system/
+

@@ -21,11 +21,14 @@ if ALERT_CHAT_ID.isdigit() or (ALERT_CHAT_ID.startswith("-") and ALERT_CHAT_ID[1
 else:
     ALERT_CHAT_ID = None
 
-# Website Audit Log API Config
-AUDIT_LOGS_URL = os.getenv(
-    "AUDIT_LOGS_URL",
-    "https://pulse-chat-x187.onrender.com/api/admin/audit-logs?key=a582bada4cc1da841b5a851cba3e1809"
-).strip()
+# Vercel & Supabase Audit Configuration (Primary for Serverless Vercel site)
+VERCEL_APP_URL = os.getenv("VERCEL_APP_URL", "https://pulse-chat-phi-three.vercel.app").strip()
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://xsppndniabvdntvsivwm.supabase.co").strip()
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzcHBuZG5pYWJ2ZG50dnNpdndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyOTgxODIsImV4cCI6MjEwNzg3NDE4Mn0.f3jQmV-feyZorkfD1ZWM3dsNBwV3oSjuKsNeGHm2ni4").strip()
+SUPABASE_TABLE = os.getenv("SUPABASE_TABLE", "chat_audit_logs").strip()
+
+# Legacy / Custom REST Audit Endpoint (Optional fallback)
+AUDIT_LOGS_URL = os.getenv("AUDIT_LOGS_URL", "").strip()
 
 # Monitoring interval in seconds
 POLL_INTERVAL_SECONDS = int(os.getenv("POLL_INTERVAL_SECONDS", "15"))

@@ -3,7 +3,14 @@ import logging
 from typing import List, Dict, Any, Tuple
 import requests
 
-from config import AUDIT_LOGS_URL, STATE_FILE
+from config import (
+    AUDIT_LOGS_URL,
+    STATE_FILE,
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    SUPABASE_TABLE,
+    VERCEL_APP_URL
+)
 from models import AuditEvent
 
 logger = logging.getLogger("audit_bot.collector")
@@ -33,19 +40,43 @@ class LogCollector:
             logger.warning(f"Error saving seen events state: {e}")
 
     def fetch_events(self) -> List[AuditEvent]:
-        """Fetch audit events from the configured Render admin endpoint."""
-        try:
-            resp = requests.get(self.url, timeout=15)
-            resp.raise_for_status()
-            data = resp.json()
-            raw_logs = data.get("logs", [])
-            events = [AuditEvent.from_dict(item) for item in raw_logs]
-            # Order from oldest to newest by timestamp if possible
-            events.sort(key=lambda x: x.timestamp)
-            return events
-        except Exception as e:
-            logger.error(f"Failed to fetch audit logs from {self.url}: {e}")
-            raise
+        """
+        Fetch audit events:
+        1. Checks Supabase REST API (for Vercel serverless deployment).
+        2. Falls back to AUDIT_LOGS_URL if configured.
+        """
+        if SUPABASE_URL and SUPABASE_KEY:
+            try:
+                endpoint = f"{SUPABASE_URL.rstrip('/')}/rest/v1/{SUPABASE_TABLE}?select=*&order=created_at.asc"
+                headers = {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}"
+                }
+                resp = requests.get(endpoint, headers=headers, timeout=15)
+                resp.raise_for_status()
+                raw_logs = resp.json()
+                events = [AuditEvent.from_dict(item) for item in raw_logs]
+                events.sort(key=lambda x: x.timestamp)
+                return events
+            except Exception as e:
+                logger.error(f"Failed to fetch audit logs from Supabase ({SUPABASE_URL}): {e}")
+                if not self.url:
+                    raise
+
+        if self.url:
+            try:
+                resp = requests.get(self.url, timeout=15)
+                resp.raise_for_status()
+                data = resp.json()
+                raw_logs = data.get("logs", data if isinstance(data, list) else [])
+                events = [AuditEvent.from_dict(item) for item in raw_logs]
+                events.sort(key=lambda x: x.timestamp)
+                return events
+            except Exception as e:
+                logger.error(f"Failed to fetch audit logs from {self.url}: {e}")
+                raise
+
+        return []
 
     def poll_new_events(self) -> List[AuditEvent]:
         """Poll the endpoint and return only newly discovered events since last poll."""
