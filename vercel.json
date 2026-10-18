@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "rewrites": [
-    { "source": "/api/webhook", "destination": "/api/webhook.py" },
-    { "source": "/api/cron", "destination": "/api/cron.py" },
-    { "source": "/api/set_webhook", "destination": "/api/set_webhook.py" },
-    { "source": "/", "destination": "/api/index.py" }
-  ],
   "crons": [
     {
       "path": "/api/cron",

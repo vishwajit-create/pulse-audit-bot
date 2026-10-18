@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulse Chat Forensic Sentinel - Vercel Serverless</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0b0f19;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 650px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            text-align: center;
+        }
+        .badge {
+            display: inline-block;
+            background: #065f46;
+            color: #34d399;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 26px;
+            margin: 0 0 10px 0;
+            color: #38bdf8;
+        }
+        p {
+            color: #94a3b8;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .info-box {
+            background: #1e293b;
+            border-radius: 10px;
+            padding: 16px;
+            margin: 25px 0;
+            text-align: left;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+        .info-row {
+            margin: 8px 0;
+        }
+        .info-row b {
+            color: #e2e8f0;
+        }
+        .btn {
+            display: inline-block;
+            background: #2563eb;
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 6px;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #1d4ed8;
+        }
+        .btn-secondary {
+            background: #334155;
+        }
+        .btn-secondary:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="badge">🟢 Vercel Serverless Ready</div>
+        <h1>🛡️ Pulse Chat Forensic Sentinel</h1>
+        <p>Continuous AI-assisted cyber-forensic monitoring for your Vercel web application.</p>
+
+        <div class="info-box">
+            <div class="info-row"><b>Website Monitored:</b> <a href="https://pulse-chat-phi-three.vercel.app" target="_blank" style="color:#38bdf8;">https://pulse-chat-phi-three.vercel.app</a></div>
+            <div class="info-row"><b>Database Engine:</b> Supabase Realtime (chat_audit_logs)</div>
+            <div class="info-row"><b>Webhook Route:</b> <code>/api/webhook</code></div>
+            <div class="info-row"><b>Cron Route:</b> <code>/api/cron</code> (Daily)</div>
+        </div>
+
+        <div>
+            <a href="/api/set_webhook" class="btn">⚡ 1-Click Register Webhook</a>
+            <a href="/api/set_webhook?action=info" class="btn btn-secondary">🔍 Webhook Health</a>
+        </div>
+    </div>
+</body>
+</html>
