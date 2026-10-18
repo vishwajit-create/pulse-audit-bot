@@ -45,23 +45,38 @@ class LogCollector:
         1. Checks Supabase REST API (for Vercel serverless deployment).
         2. Falls back to AUDIT_LOGS_URL if configured.
         """
-        if SUPABASE_URL and SUPABASE_KEY:
-            try:
-                endpoint = f"{SUPABASE_URL.rstrip('/')}/rest/v1/{SUPABASE_TABLE}?select=*&order=created_at.asc"
-                headers = {
-                    "apikey": SUPABASE_KEY,
-                    "Authorization": f"Bearer {SUPABASE_KEY}"
-                }
-                resp = requests.get(endpoint, headers=headers, timeout=15)
-                resp.raise_for_status()
-                raw_logs = resp.json()
-                events = [AuditEvent.from_dict(item) for item in raw_logs]
-                events.sort(key=lambda x: x.timestamp)
-                return events
-            except Exception as e:
-                logger.error(f"Failed to fetch audit logs from Supabase ({SUPABASE_URL}): {e}")
-                if not self.url:
-                    raise
+        # Default project reference fallback
+        default_supabase_url = "https://xsppndniabvdntvsivwm.supabase.co"
+        supabase_targets = []
+        if SUPABASE_URL:
+            supabase_targets.append(SUPABASE_URL)
+        if default_supabase_url not in supabase_targets:
+            supabase_targets.append(default_supabase_url)
+
+        if SUPABASE_KEY:
+            for s_url in supabase_targets:
+                try:
+                    clean_base = s_url.rstrip('/')
+                    if not clean_base.startswith("http://") and not clean_base.startswith("https://"):
+                        clean_base = f"https://{clean_base}"
+                    endpoint = f"{clean_base}/rest/v1/{SUPABASE_TABLE}?select=*&order=created_at.asc"
+                    headers = {
+                        "apikey": SUPABASE_KEY,
+                        "Authorization": f"Bearer {SUPABASE_KEY}"
+                    }
+                    resp = requests.get(endpoint, headers=headers, timeout=15)
+                    resp.raise_for_status()
+                    raw_logs = resp.json()
+                    events = [AuditEvent.from_dict(item) for item in raw_logs]
+                    events.sort(key=lambda x: x.timestamp)
+                    return events
+                except Exception as e:
+                    logger.warning(f"Attempt to fetch audit logs from Supabase ({s_url}) failed: {e}")
+                    last_supabase_error = e
+
+            if not self.url and 'last_supabase_error' in locals():
+                logger.error(f"All Supabase endpoints failed: {last_supabase_error}")
+                raise RuntimeError(f"Database query error: {last_supabase_error}")
 
         if self.url:
             try:

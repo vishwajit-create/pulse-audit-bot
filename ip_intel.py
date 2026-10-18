@@ -12,10 +12,15 @@ logger = logging.getLogger("audit_bot.ip_intel")
 _IP_CACHE: Dict[str, IPLocationInfo] = {}
 
 def is_private_or_loopback(ip_str: str) -> bool:
+    if not ip_str:
+        return False
+    clean = ip_str.strip().strip("[]'\"")
+    if clean.lower() in ("n/a", "none", "unknown", "localhost"):
+        return True
     try:
-        ip_obj = ipaddress.ip_address(ip_str.strip())
+        ip_obj = ipaddress.ip_address(clean)
         return ip_obj.is_private or ip_obj.is_loopback or ip_obj.is_reserved
-    except ValueError:
+    except Exception:
         return False
 
 def lookup_ip_intelligence(ip: str) -> IPLocationInfo:
@@ -25,11 +30,22 @@ def lookup_ip_intelligence(ip: str) -> IPLocationInfo:
     - Autonomous System & ISP attribution
     - AbuseIPDB reputation check (if key configured)
     """
-    clean_ip = ip.strip()
+    if not ip:
+        return IPLocationInfo(ip="N/A", status="unspecified")
+    clean_ip = ip.strip().strip("[]'\"")
     if clean_ip in _IP_CACHE:
         return _IP_CACHE[clean_ip]
 
     info = IPLocationInfo(ip=clean_ip)
+
+    if clean_ip.lower() in ("n/a", "none", "unknown", ""):
+        info.status = "unspecified"
+        info.country = "Unspecified / N/A"
+        info.isp = "N/A"
+        info.org = "N/A"
+        info.asn = "N/A"
+        _IP_CACHE[clean_ip] = info
+        return info
 
     # Handle local / private addresses
     if is_private_or_loopback(clean_ip):
