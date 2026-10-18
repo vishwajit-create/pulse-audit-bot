@@ -1,2 +1,16 @@
+[project]
+name = "pulse-audit-bot"
+version = "0.1.0"
+description = "Pulse Chat Forensic Sentinel Audit Bot"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "python-telegram-bot>=22.0",
+    "reportlab>=4.0",
+    "user-agents>=2.2.0",
+    "requests>=2.30.0",
+    "python-dotenv>=1.0.0",
+]
+
 [tool.vercel]
-entrypoint = "api.index:handler"
+entrypoint = "index:handler"
